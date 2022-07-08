@@ -1,21 +1,23 @@
 {
-  "name": "html-parser",
+  "name": "htmlparser",
   "version": "1.0.0",
-  "description": "an Html Parser",
-  "main": "index.ts",
-  "type": "module",
+  "description": "HtmlParser",
+  "main": "src/index.ts",
+  "dependencies": {},
+  "devDependencies": {},
   "scripts": {
-    "start": "node --experimental-specifier-resolution=node --loader ts-node/esm ./src/test.ts"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "bun ./src/index.ts"
   },
-  "keywords": [
-    "Html",
-    "parser"
-  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Autumnlight02/htmlParser.git"
+  },
   "author": "Aykut Akgün",
   "license": "ISC",
-  "dependencies": {
-    "nodemon": "^2.0.18",
-    "ts-node": "^10.8.1"
-  }
+  "bugs": {
+    "url": "https://github.com/Autumnlight02/htmlParser/issues"
+  },
+  "homepage": "https://github.com/Autumnlight02/htmlParser#readme"
 }
 
