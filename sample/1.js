@@ -8,7 +8,7 @@ const test = `
     <title>Document</title>
   </head>
   <body>
-    <div class="hello he<<<<>>>>>>>>>>>>>llo2 meh>
+    <div class="hello he<<<<>>>>>>>>>>>>>llo2 meh">
       <input class="yoyo" idk="true" while='"false"' />
     </div>
   </body>
@@ -20,6 +20,10 @@ const bigTest = `
 
 
 <body>
+<div class="hello he<<<<>>>>>>>>>>>>>llo2" meh>
+<input class="yoyo" idk="true" while='"false"' />
+<div></div>
+</div>
 <div align="center"><center>
 <h1 class="fore">When to load CSS</h1>
 

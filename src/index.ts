@@ -1,44 +1,15 @@
 import { ElementObject, PerformanceReadings, StringObject } from './interfaces.js';
 
-console.clear();
-
-const specialFunction = {
-  'style': () => {
-    //@ts-ignore
-    // console.log(tagOpener);
-  },
-  'script': () => {},
-  '!--': () => {},
-};
-const voidTags: VoidTags = {
-  //TODO convert this to a callable function
-  '!--': true,
-  'img': true,
-  'area': true,
-  'base': true,
-  'br': true,
-  'col': true,
-  'command': true,
-  'embed': true,
-  'hr': true,
-  'input': true,
-  'keygen': true,
-  'link': true,
-  'meta': true,
-  'param': true,
-  'source': true,
-  'track': true,
-  'wbr': true,
-};
+// console.clear();
 
 // 1. Handling for Style Scripts comments
 
-import sample from '../sample/1.js';
+// import sample from '../sample/1.js';
 // console.log('start');
 // console.log(parseHTML(sample));
 
 interface VoidTags {
-  [key: string]: true;
+  [key: string]: () => boolean;
 }
 
 function returnMatchesArray(regex: RegExp, string: string) {
@@ -54,6 +25,60 @@ function returnMatchesArray(regex: RegExp, string: string) {
 }
 
 export default function parseHTML(string: string) {
+  const voidTags: VoidTags = {
+    //TODO convert this to a callable function
+    '!--': () => {
+      return true;
+    },
+    'img': () => {
+      return true;
+    },
+    'area': () => {
+      return true;
+    },
+    'base': () => {
+      return true;
+    },
+    'br': () => {
+      return true;
+    },
+    'col': () => {
+      return true;
+    },
+    'command': () => {
+      return true;
+    },
+    'embed': () => {
+      return true;
+    },
+    'hr': () => {
+      return true;
+    },
+    'input': () => {
+      return true;
+    },
+    'keygen': () => {
+      return true;
+    },
+    'link': () => {
+      return true;
+    },
+    'meta': () => {
+      return true;
+    },
+    'param': () => {
+      return true;
+    },
+    'source': () => {
+      return true;
+    },
+    'track': () => {
+      return true;
+    },
+    'wbr': () => {
+      return true;
+    },
+  };
   const rawString = string;
 
   // small overhead if script is found
@@ -89,7 +114,7 @@ export default function parseHTML(string: string) {
 
   //function which checks if the given string is a voidTag
   function checkIfSingleTag(tag: string) {
-    return voidTags[tag] !== undefined;
+    return voidTags[tag]?.();
   }
 
   //todo rework
@@ -287,6 +312,6 @@ export default function parseHTML(string: string) {
     }
   }
   performanceReadings.total[1] = performance.now();
-  // console.log(finalElement);
-  // console.log('finaltime: ' + (performanceReadings.total[1] - performanceReadings.total[0]) + 'ms');
+  console.log(finalElement);
+  console.log('finaltime: ' + (performanceReadings.total[1] - performanceReadings.total[0]) + 'ms');
 }

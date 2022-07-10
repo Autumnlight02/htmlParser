@@ -1,69 +1,56 @@
 'use strict';
 // console.clear();
-var specialFunction = {
-  'style': function () {
-    //@ts-ignore
-    // console.log(tagOpener);
-  },
-  'script': function () {},
-  '!--': function () {},
-};
-
-import sample from '../sample/1.js';
-// console.log('start');
-console.log(parseHTML(sample));
-
 var voidTags = {
   //TODO convert this to a callable function
-  '!--': () => {
+  '!--': function () {
     return true;
   },
-  'img': () => {
+  'img': function () {
     return true;
   },
-  'area': () => {
+  'area': function () {
     return true;
   },
-  'base': () => {
+  'base': function () {
     return true;
   },
-  'br': () => {
+  'br': function () {
     return true;
   },
-  'col': () => {
+  'col': function () {
     return true;
   },
-  'command': () => {
+  'command': function () {
     return true;
   },
-  'embed': () => {
+  'embed': function () {
     return true;
   },
-  'hr': () => {
+  'hr': function () {
     return true;
   },
-  'input': () => {
+  'input': function () {
     return true;
   },
-  'keygen': () => {
+  'keygen': function () {
     return true;
   },
-  'link': () => {
+  'link': function () {
     return true;
   },
-  'meta': () => {
+  'meta': function () {
     return true;
   },
-  'param': () => {
+  'param': function () {
     return true;
   },
-  'source': () => {
+  'source': function () {
     return true;
   },
-  'track': () => {
+  'track': function () {
     return true;
   },
-  'wbr': () => {
+  'wbr': function () {
     return true;
   },
 };
@@ -107,13 +94,7 @@ function parseHTML(string) {
   var tagOpener = returnMatchesArray(/</g, string);
   var tagCloser = returnMatchesArray(/>/g, string);
   //function which checks if the given string is a voidTag
-  function checkIfSingleTag(tag) {
-    console.log(tag);
-    if (voidTags.hasOwnProperty(tag)) {
-      return voidTags[tag]();
-    }
-    return false;
-  }
+
   //todo rework
   var finalElement = { elementType: 'root', attributes: {}, children: [] };
   [1, 2, 7, 8, 5];
@@ -151,6 +132,10 @@ function parseHTML(string) {
   function indexElement(tagBeginningGlobalIndex, tagEndingGlobalIndex) {
     var tagString = string.slice(tagBeginningGlobalIndex, tagEndingGlobalIndex);
     var singleTag = false;
+    function checkIfSingleTag(tag) {
+      var _a;
+      return (_a = voidTags[tag]) === null || _a === void 0 ? void 0 : _a.call(voidTags);
+    }
     // specialFunction.style();
     //fastes matching algorythm https://jsbench.me/j7l530t5hr/1
     // detecting if we have an endtag, if so we just move one up the current path
@@ -190,7 +175,7 @@ function parseHTML(string) {
         // console.log(attributeString);
         // getting next valid character
         safeGuard++;
-        if (safeGuard === 100) {
+        if (safeGuard === 10) {
           //   console.log('SAFEGUARD');
           break;
         }
@@ -280,8 +265,8 @@ function parseHTML(string) {
     }
   }
   performanceReadings.total[1] = performance.now();
-  // console.log(finalElement);
-  // console.log('finaltime: ' + (performanceReadings.total[1] - performanceReadings.total[0]) + 'ms');
+  //   console.log(finalElement);
+  //   console.log('finaltime: ' + (performanceReadings.total[1] - performanceReadings.total[0]) + 'ms');
 }
 export default parseHTML;
 
