@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "description": "HtmlParser",
   "main": "src/index.ts",
-  "dependencies": {},
-  "devDependencies": {},
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "bun ./src/index.ts"
@@ -18,6 +17,13 @@
   "bugs": {
     "url": "https://github.com/Autumnlight02/htmlParser/issues"
   },
-  "homepage": "https://github.com/Autumnlight02/htmlParser#readme"
+  "homepage": "https://github.com/Autumnlight02/htmlParser#readme",
+  "dependencies": {
+    "benchmark": "^2.1.4",
+    "node-html-parser": "^5.3.3"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.3",
+    "bun-types": "^0.0.83"
+  }
 }
-
