@@ -1,15 +1,12 @@
-//@ts-ignore
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-
-var Benchmark = require('benchmark');
+import Benchmark from 'benchmark';
 
 var suite = new Benchmark.Suite();
 
+//@ts-ignore
 import sample from '../sample/1.js';
 
 import parseHTML from './index.js';
-
+//@ts-ignore
 import { parse } from 'node-html-parser';
 
 suite
@@ -19,10 +16,12 @@ suite
   .add('enemy parser', function () {
     const parsed = parse(sample);
   })
+  //@ts-ignore
   .on('cycle', function (event) {
     console.log(String(event.target));
   })
   .on('complete', function () {
+    //@ts-ignore
     console.log('Fastest is ' + this.filter('fastest').map('name'));
   })
   .run();

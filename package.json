@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "bun ./src/index.ts"
+    "start": "bun ./src/index.ts",
+    "es": "esbuild ./src/variant2.ts --bundle --outfile=./src/variant2.js"
   },
   "repository": {
     "type": "git",
@@ -20,10 +21,13 @@
   "homepage": "https://github.com/Autumnlight02/htmlParser#readme",
   "dependencies": {
     "benchmark": "^2.1.4",
+    "esbuild": "^0.14.49",
     "node-html-parser": "^5.3.3"
   },
   "devDependencies": {
+    "@types/benchmark": "^2.1.1",
     "@types/node": "^18.0.3",
     "bun-types": "^0.0.83"
   }
 }
+

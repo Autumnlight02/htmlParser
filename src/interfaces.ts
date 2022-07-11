@@ -5,7 +5,7 @@ export interface PerformanceReadings {
 }
 
 export interface ElementObject {
-  elementType: string | undefined;
+  elementType: string;
   attributes: { [key: string]: string };
   children: (ElementObject | StringObject)[];
 }
@@ -14,3 +14,5 @@ export interface StringObject {
   elementType: 'textContent';
   textContent: string;
 }
+
+// export type TagString = `<${string} >`

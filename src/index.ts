@@ -152,7 +152,7 @@ export default function parseHTML(string: string) {
 
     // variables initialized out of object to decrease the lookup overhead of an object
     const elementType = tagString.slice(0, tagNameEnd);
-    const attributes = {};
+    const attributes: { [key: string]: string } = {};
     const elementObject: ElementObject = {
       elementType: elementType,
       attributes: attributes,
@@ -226,7 +226,7 @@ export default function parseHTML(string: string) {
           const seperatorCharacter: "'" | '"' = attributeString.slice(
             nextValidSeperatorIndex + 1,
             nextValidSeperatorIndex + 2
-          );
+          ) as "'" | '"';
           // adding +2 to account for space and chacater
           currentIndex = nextValidSeperatorIndex + 2;
           // checking if its an attribute withhin quotes
@@ -289,6 +289,6 @@ export default function parseHTML(string: string) {
     }
   }
   performanceReadings.total[1] = performance.now();
-  // console.log(finalElement);
+  console.log(finalElement);
   // console.log('finaltime: ' + (performanceReadings.total[1] - performanceReadings.total[0]) + 'ms');
 }
