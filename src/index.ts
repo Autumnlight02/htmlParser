@@ -4,10 +4,10 @@ import { ElementObject, PerformanceReadings, StringObject } from './interfaces.j
 
 // 1. Handling for Style Scripts comments
 
-interface VoidTags {
+interface TagEvents {
   [key: string]: boolean;
 }
-const voidTags: VoidTags = {
+const tagEvents: TagEvents = {
   //TODO convert this to a callable function
   '!--': true,
   'img': true,
