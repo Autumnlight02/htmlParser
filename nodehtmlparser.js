@@ -6,6 +6,6 @@ import sample from './sample/1.js';
 let a = performance.now();
 const parsed = parse(sample);
 let b = performance.now();
-console.log(parsed);
 
 console.log(b - a);
+console.log(parsed);

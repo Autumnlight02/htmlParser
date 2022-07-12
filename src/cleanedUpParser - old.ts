@@ -1,9 +1,5 @@
 import { ElementObject, PerformanceReadings, StringObject } from './interfaces.js';
 
-// console.clear();
-
-// 1. Handling for Style Scripts comments
-
 interface VoidTags {
   [key: string]: boolean;
 }
@@ -28,46 +24,17 @@ const voidTags: VoidTags = {
   'wbr': true,
 };
 
-//todo instead of this expose some variables to entire function scope which affect the tag, and then change them with an arrow function
-// const specialBehaviour = {
-//   'div': () => {
-//     //@ts-ignore
-//     console.log(elementType);
-//   },
-//   'script': () => {},
-//   'style': () => {},
-//   '!--': () => {},
-// };
-
-
-//@ts-ignore
 import sample from '../sample/1.js';
+console.log('start');
+console.log(parseHTML(sample));
 
-let a = performance.now();
-parseHTML(sample);
-let b = performance.now();
-
-console.log(b - a);
-
-
-
-function returnMatchesArray(regex: RegExp, string: string) {
-  // faster selfcoded string.matchAll(regex) with deconstruction implementation, [...string.matchAll] runs 30% slower : https://jsbench.me/f6kxkn9ruv/1
-  const matchingLetters = string.matchAll(regex);
-  let nextValue = matchingLetters.next();
-  const result: number[] = [];
-  while (nextValue.value !== undefined) {
-    result.push(nextValue.value.index);
-    nextValue = matchingLetters.next();
-  }
-  return result;
+interface TagEvents {
+  [key: string]: () => void;
 }
 
 export default function parseHTML(string: string) {
-  const rawString = string;
+  //* intializationCode for performance readings */
 
-  // small overhead if script is found
-  // intializing performance readings
   const performanceReadings: PerformanceReadings = {
     total: [0, 0],
     stringFormatting: [0, 0],
@@ -77,8 +44,84 @@ export default function parseHTML(string: string) {
   performanceReadings.total[0] = performance.now();
   performanceReadings.stringFormatting[0] = performance.now();
 
+  //* Exposed variables from indexElement for faster runtime and moddable features*/
+
+  // this is used to set runOnTagEnd // https://jsbench.me/5nl5h0bx79
+  const emptyOverrideFunction = () => {};
+
+  // this function needs to be set if you want to run an event after an event has run
+  // later on adding events needs an api
+  // to acess parent use the path option and go one up, to acess the element itself get current path element
+  // example currentPath[currentPathDepth] to get curr element
+  // in case of single element do currentPathDepth + 1
+  let runOnTagEnd = emptyOverrideFunction;
+
+  let singleTag = false;
+
+  //* custom Tag events, these are also used to define voidTags, require an api later on to add events */
+
+  // const tagEvents: TagEvents = {
+  //   //TODO convert this to a callable function
+  //   '!--': () => {
+  //     singleTag = true;
+  //   },
+  //   'img': () => {
+  //     singleTag = true;
+  //   },
+  //   'area': () => {
+  //     singleTag = true;
+  //   },
+  //   'base': () => {
+  //     singleTag = true;
+  //   },
+  //   'br': () => {
+  //     singleTag = true;
+  //   },
+  //   'col': () => {
+  //     singleTag = true;
+  //   },
+  //   'command': () => {
+  //     singleTag = true;
+  //   },
+  //   'embed': () => {
+  //     singleTag = true;
+  //   },
+  //   'hr': () => {
+  //     singleTag = true;
+  //   },
+  //   'input': () => {
+  //     singleTag = true;
+  //   },
+  //   'keygen': () => {
+  //     singleTag = true;
+  //   },
+  //   'link': () => {
+  //     singleTag = true;
+  //   },
+  //   'meta': () => {
+  //     singleTag = true;
+  //   },
+  //   'param': () => {
+  //     singleTag = true;
+  //   },
+  //   'source': () => {
+  //     singleTag = true;
+  //   },
+  //   'track': () => {
+  //     singleTag = true;
+  //   },
+  //   'wbr': () => {
+  //     singleTag = true;
+  //   },
+  // };
+
+  const rawString = string;
+
+  // small overhead if script is found
   const rawStringTagOpener = returnMatchesArray(/</g, rawString);
   const rawStringTagCloser = returnMatchesArray(/>/g, rawString);
+  // intializing performance readings
+
   //TODO test performance
   // formatting string
   // removing beginning and end spacings
@@ -97,16 +140,14 @@ export default function parseHTML(string: string) {
   const tagOpener = returnMatchesArray(/</g, string);
   const tagCloser = returnMatchesArray(/>/g, string);
 
-  //function which checks if the given string is a voidTag
   function checkIfSingleTag(tag: string) {
     return voidTags[tag] === true;
   }
 
   //todo rework
-  const finalElement: ElementObject = { elementType: 'root', attributes: {}, children: [] };
+  const finalElement: ElementObject = { elementType: 'rootContainer', attributes: {}, children: [] };
 
-  [1, 2, 7, 8, 5];
-  // depthRepresentation of the dom
+  //* depthRepresentation of the dom which represents at the current location the path to the element
   const currentPath: (ElementObject | StringObject)[] = [finalElement];
 
   // instead of using pop and push to have a depth representation of the latest node
@@ -115,7 +156,7 @@ export default function parseHTML(string: string) {
   // https://jsbench.me/8rl533v168/1
   let currentPathDepth = 0;
 
-  // to hold current index
+  // to hold current index of closing and opening brackets (< and >)
   let openerIndex = 0,
     closerIndex = 0;
 
@@ -126,9 +167,10 @@ export default function parseHTML(string: string) {
     closerIndex++;
   }
 
-  // looping though all tagopener
+  // looping though all tagopener to find corresponding tags and element
   for (; openerIndex < tagOpener.length; openerIndex++, closerIndex++) {
     indexElement(tagOpener[openerIndex] + 1, tagCloser[closerIndex]);
+
     //checks if the next letter is <, if not we know due to our text formatting that the tag has to have some text in between
     // in addition checking if tagOpener is bigger, usually id use !== so we know theyre not equal, but issue is that that also accounts for undefined once we hit the last index
     // so i use smaller then
@@ -144,29 +186,31 @@ export default function parseHTML(string: string) {
 
   function indexElement(tagBeginningGlobalIndex: number, tagEndingGlobalIndex: number) {
     const tagString = string.slice(tagBeginningGlobalIndex, tagEndingGlobalIndex);
-    let singleTag = false;
-
-    // specialFunction.style();
 
     //fastes matching algorythm https://jsbench.me/j7l530t5hr/1
     // detecting if we have an endtag, if so we just move one up the current path
-    if (tagString.indexOf('/') === 0) {
+    // note: replaced tagString.indexOf('/') === 0 for slice for minimal more performance
+    if (tagString.slice(1, 2) === '/') {
       //todo should i do currentPath[currentPathDepth] = undefined?
       currentPathDepth--;
       return;
     }
 
+    //* Getting the last index of the tagNameEnd
     const tagNameEnd = getFirstTagNameEndingChar();
 
-    // variables initialized out of object to decrease the lookup overhead of an object
+    //* variables initialized out of object to decrease the lookup overhead of an object
     const elementType = tagString.slice(0, tagNameEnd);
     const attributes: { [key: string]: string } = {};
+
+    //* preparing the object which will be pushed out
     const elementObject: ElementObject = {
       elementType: elementType,
       attributes: attributes,
       children: [],
     };
 
+    //* increasing the currentPathDepth so we can append the currentPath to the object
     currentPathDepth++;
     currentPath[currentPathDepth] = elementObject;
 
@@ -174,11 +218,12 @@ export default function parseHTML(string: string) {
     parentObject.children.push(elementObject);
 
     let attributeString;
-    if (checkIfSingleTag(elementObject.elementType) === true) {
+    // tagEvents[elementType]?.();
+    if (checkIfSingleTag(elementType)) {
       currentPathDepth--;
-      singleTag = true;
       // removing the / at single tags and trimming away the space
       //TODO FIX BUG
+      singleTag = true;
       attributeString = tagString.slice(tagNameEnd, tagString.length - 1).trim();
     } else {
       attributeString = tagString.slice(tagNameEnd).trim();
@@ -274,6 +319,13 @@ export default function parseHTML(string: string) {
       }
     }
 
+    //* running the event at the end
+    runOnTagEnd();
+
+    //* Cleanup */
+    // singleTag = false;
+    // runOnTagEnd = emptyOverrideFunction;
+
     // returns the first tagname ending character
     function getFirstTagNameEndingChar() {
       const one = tagString.indexOf(' ');
@@ -297,6 +349,18 @@ export default function parseHTML(string: string) {
     }
   }
   performanceReadings.total[1] = performance.now();
-  // console.log(finalElement);
-  // console.log('finaltime: ' + (performanceReadings.total[1] - performanceReadings.total[0]) + 'ms');
+  console.log(finalElement);
+  console.log('finaltime: ' + (performanceReadings.total[1] - performanceReadings.total[0]) + 'ms');
+}
+
+function returnMatchesArray(regex: RegExp, string: string) {
+  // faster selfcoded string.matchAll(regex) with deconstruction implementation, [...string.matchAll] runs 30% slower : https://jsbench.me/f6kxkn9ruv/1
+  const matchingLetters = string.matchAll(regex);
+  let nextValue = matchingLetters.next();
+  const result: number[] = [];
+  while (nextValue.value !== undefined) {
+    result.push(nextValue.value.index);
+    nextValue = matchingLetters.next();
+  }
+  return result;
 }

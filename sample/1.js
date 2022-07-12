@@ -8,7 +8,7 @@ const test = `
     <title>Document</title>
   </head>
   <body>
-    <div class="hello he<<<<>>>>>>>>>>>>>llo2 meh>
+    <div class="hello he<<<<>>>>>>>>>>>>>llo2" meh>
       <input class="yoyo" idk="true" while='"false"' />
     </div>
   </body>
@@ -5412,4 +5412,4 @@ stadyn_image10</p>
 
 const textSample = `<div>test</div><div>test</div>`;
 
-export default bigTest;
+export default test;

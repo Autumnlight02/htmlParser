@@ -4,29 +4,9 @@ import { ElementObject, PerformanceReadings, StringObject } from './interfaces.j
 
 // 1. Handling for Style Scripts comments
 
-interface VoidTags {
-  [key: string]: boolean;
+interface TagEvents {
+  [key: string]: () => void;
 }
-const voidTags: VoidTags = {
-  //TODO convert this to a callable function
-  '!--': true,
-  'img': true,
-  'area': true,
-  'base': true,
-  'br': true,
-  'col': true,
-  'command': true,
-  'embed': true,
-  'hr': true,
-  'input': true,
-  'keygen': true,
-  'link': true,
-  'meta': true,
-  'param': true,
-  'source': true,
-  'track': true,
-  'wbr': true,
-};
 
 //todo instead of this expose some variables to entire function scope which affect the tag, and then change them with an arrow function
 // const specialBehaviour = {
@@ -39,17 +19,68 @@ const voidTags: VoidTags = {
 //   '!--': () => {},
 // };
 
+// import sample from '../sample/1.js';
+// console.log('start');
+// console.log(parseHTML(sample));
 
-//@ts-ignore
-import sample from '../sample/1.js';
+//* Exposed variables from indexElement for faster runtime and moddable features*/
 
-let a = performance.now();
-parseHTML(sample);
-let b = performance.now();
+let singleTag = false;
 
-console.log(b - a);
-
-
+const tagEvents: TagEvents = {
+  //TODO convert this to a callable function
+  '!--': () => {
+    singleTag = true;
+  },
+  'img': () => {
+    singleTag = true;
+  },
+  'area': () => {
+    singleTag = true;
+  },
+  'base': () => {
+    singleTag = true;
+  },
+  'br': () => {
+    singleTag = true;
+  },
+  'col': () => {
+    singleTag = true;
+  },
+  'command': () => {
+    singleTag = true;
+  },
+  'embed': () => {
+    singleTag = true;
+  },
+  'hr': () => {
+    singleTag = true;
+  },
+  'input': () => {
+    singleTag = true;
+  },
+  'keygen': () => {
+    singleTag = true;
+  },
+  'link': () => {
+    singleTag = true;
+  },
+  'meta': () => {
+    singleTag = true;
+  },
+  'param': () => {
+    singleTag = true;
+  },
+  'source': () => {
+    singleTag = true;
+  },
+  'track': () => {
+    singleTag = true;
+  },
+  'wbr': () => {
+    singleTag = true;
+  },
+};
 
 function returnMatchesArray(regex: RegExp, string: string) {
   // faster selfcoded string.matchAll(regex) with deconstruction implementation, [...string.matchAll] runs 30% slower : https://jsbench.me/f6kxkn9ruv/1
@@ -67,6 +98,8 @@ export default function parseHTML(string: string) {
   const rawString = string;
 
   // small overhead if script is found
+  const rawStringTagOpener = returnMatchesArray(/</g, rawString);
+  const rawStringTagCloser = returnMatchesArray(/>/g, rawString);
   // intializing performance readings
   const performanceReadings: PerformanceReadings = {
     total: [0, 0],
@@ -77,8 +110,6 @@ export default function parseHTML(string: string) {
   performanceReadings.total[0] = performance.now();
   performanceReadings.stringFormatting[0] = performance.now();
 
-  const rawStringTagOpener = returnMatchesArray(/</g, rawString);
-  const rawStringTagCloser = returnMatchesArray(/>/g, rawString);
   //TODO test performance
   // formatting string
   // removing beginning and end spacings
@@ -96,11 +127,6 @@ export default function parseHTML(string: string) {
 
   const tagOpener = returnMatchesArray(/</g, string);
   const tagCloser = returnMatchesArray(/>/g, string);
-
-  //function which checks if the given string is a voidTag
-  function checkIfSingleTag(tag: string) {
-    return voidTags[tag] === true;
-  }
 
   //todo rework
   const finalElement: ElementObject = { elementType: 'root', attributes: {}, children: [] };
@@ -144,7 +170,6 @@ export default function parseHTML(string: string) {
 
   function indexElement(tagBeginningGlobalIndex: number, tagEndingGlobalIndex: number) {
     const tagString = string.slice(tagBeginningGlobalIndex, tagEndingGlobalIndex);
-    let singleTag = false;
 
     // specialFunction.style();
 
@@ -173,10 +198,13 @@ export default function parseHTML(string: string) {
     const parentObject = currentPath[currentPathDepth - 1] as ElementObject;
     parentObject.children.push(elementObject);
 
+    let singleTag;
     let attributeString;
-    if (checkIfSingleTag(elementObject.elementType) === true) {
+
+    tagEvents[elementType]?.();
+
+    if (singleTag) {
       currentPathDepth--;
-      singleTag = true;
       // removing the / at single tags and trimming away the space
       //TODO FIX BUG
       attributeString = tagString.slice(tagNameEnd, tagString.length - 1).trim();

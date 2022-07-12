@@ -7,7 +7,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "bun ./src/index.ts",
-    "es": "esbuild ./src/variant2.ts --bundle --outfile=./src/variant2.js"
+    "es": "esbuild ./src/cleanedUpParser.ts --bundle --target=esnext --outfile=./src/cleanedUpParser.js",
+    "es2": "esbuild ./src/index.ts --bundle --outfile=./src/index.js",
+    "es3": "esbuild ./src/bench.ts --bundle --outfile=./src/bench.js"
   },
   "repository": {
     "type": "git",
@@ -33,3 +35,4 @@
     "typescript": "^4.7.4"
   }
 }
+
