@@ -41,7 +41,7 @@ const voidTags: VoidTags = {
 
 
 //@ts-ignore
-import sample from '../sample/1.js';
+import sample from '../sample/old1.js';
 
 let a = performance.now();
 parseHTML(sample);

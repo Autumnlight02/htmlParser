@@ -3,7 +3,7 @@ import Benchmark from 'benchmark';
 var suite = new Benchmark.Suite();
 
 //@ts-ignore
-import sample from '../sample/1.js';
+import sample from '../sample/old1.js';
 
 import parseHTML from './index.js';
 import parseHTML2 from './cleanedUpParser.js';

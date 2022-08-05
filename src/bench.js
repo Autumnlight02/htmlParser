@@ -6,16 +6,16 @@ var suite = new Benchmark.Suite();
 import sample from '../sample/1.js';
 
 import parseHTML from './index.js';
-import parseHTML2 from './cleanedUpParser.js';
+import parseHTML2 from './index3.js';
 //@ts-ignore
 import { parse } from 'node-html-parser';
 
 suite
   .add('parser Version 1', function () {
-    parseHTML(sample);
+    parseHTML2(sample);
   })
   .add('parser Version 2', function () {
-    parseHTML2(sample);
+    parseHTML(sample);
   })
   .add('enemy parser', function () {
     const parsed = parse(sample);

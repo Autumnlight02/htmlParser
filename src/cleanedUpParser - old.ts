@@ -24,7 +24,7 @@ const voidTags: VoidTags = {
   'wbr': true,
 };
 
-import sample from '../sample/1.js';
+import sample from '../sample/old1.js';
 console.log('start');
 console.log(parseHTML(sample));
 

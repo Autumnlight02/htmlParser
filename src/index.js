@@ -183,11 +183,27 @@ function parseHTML(string) {
 }
 export default parseHTML;
 
+// import sample from '../sample/1.js';
+
+// let a = performance.now();
+// parseHTML(sample);
+// let b = performance.now();
+
+// console.log(b - a);
 import sample from '../sample/1.js';
 
-let a = performance.now();
-parseHTML(sample);
-let b = performance.now();
-
-console.log(b - a);
-
+let testCount = 2000;
+let arr = [];
+for (let i = 0; i < testCount; i++) {
+  let a = performance.now();
+  parseHTML(sample);
+  let b = performance.now();
+  arr.push(b - a);
+}
+let total = 0;
+for (let i = 0; i < arr.length; i++) {
+  total = total + arr[i];
+}
+total = total / arr.length;
+// console.log(arr);
+console.log('total speed is: ' + total + 'ms');
